@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bio Óleo Brasil | Backoffice Corporativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #121212;
+      --bg-card: #1E1E1E;
+      --bg-elevated: #262626;
+      --bg-hover: #2A2A2A;
+      --border-color: #2E2E2E;
+      --primary: #FFD700;
+      --primary-hover: #E6C200;
+      --primary-muted: rgba(255, 215, 0, 0.12);
+      --secondary: #22C55E;
+      --secondary-hover: #16A34A;
+      --secondary-muted: rgba(34, 197, 94, 0.14);
+      --status-inactive: #EF4444;
+      --status-inactive-muted: rgba(239, 68, 68, 0.14);
+      --status-negotiation: #F59E0B;
+      --status-negotiation-muted: rgba(245, 158, 11, 0.14);
+      --status-testing: #3B82F6;
+      --status-testing-muted: rgba(59, 130, 246, 0.14);
+      --text-main: #F9FAFB;
+      --text-muted: #9CA3AF;
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.35);
+      --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.6);
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px;
+      background-color: var(--bg-card);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 100;
+    }
+
+    .sidebar-brand {
+      height: 72px;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary) 0%, #CCA800 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #121212;
+      box-shadow: 0 2px 10px rgba(255, 215, 0, 0.25);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+    }
+
+    .brand-subtitle {
+      display: block;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .sidebar-nav {
+      padding: 20px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .nav-link svg {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .nav-link:hover {
+      background-color: var(--bg-hover);
+      color: var(--text-main);
+    }
+
+    .nav-link.active {
+      background-color: var(--primary-muted);
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .system-status {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--secondary);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--secondary);
+    }
+
+    /* MAIN CONTENT */
+    .main-wrapper {
+      margin-left: 260px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    /* HEADER */
+    .header {
+      height: 72px;
+      background-color: rgba(30, 30, 30, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+    }
+
+    .header-title h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .header-profile {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 6px 12px;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: 999px;
+    }
+
+    .profile-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: #121212;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .profile-info {
+      display: flex;
+      flex-direction: column;
+      padding-right: 6px;
+    }
+
+    .profile-name {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .profile-role {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }
+
+    /* VIEWS MANAGEMENT */
+    .content {
+      padding: 32px;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .view-section {
+      display: none;
+      flex-direction: column;
+      gap: 28px;
+      animation: fadeIn 0.22s ease-out;
+    }
+
+    .view-section.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* KPI CARDS */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .kpi-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .kpi-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      transition: var(--transition);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: #3E3E3E;
+    }
+
+    .kpi-data {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .kpi-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .kpi-value {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.03em;
+    }
+
+    .kpi-meta {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .kpi-meta.positive {
+      color: var(--secondary);
+    }
+
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .kpi-icon.total { background-color: var(--primary-muted); color: var(--primary); }
+    .kpi-icon.active { background-color: var(--secondary-muted); color: var(--secondary); }
+    .kpi-icon.negotiation { background-color: var(--status-negotiation-muted); color: var(--status-negotiation); }
+    .kpi-icon.testing { background-color: var(--status-testing-muted); color: var(--status-testing); }
+
+    /* DASHBOARD CHARTS & PANELS */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1.7fr 1fr;
+      gap: 24px;
+    }
+
+    .panel-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .panel-header h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+
+    .panel-header p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      height: 220px;
+      padding-top: 24px;
+      gap: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .chart-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .chart-bar-value {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .chart-bar {
+      width: 100%;
+      max-width: 48px;
+      background: linear-gradient(180deg, var(--primary) 0%, rgba(255, 215, 0, 0.35) 100%);
+      border-radius: 8px 8px 0 0;
+      transition: height 0.4s ease, filter 0.2s ease;
+      cursor: pointer;
+    }
+
+    .chart-bar.current {
+      background: linear-gradient(180deg, var(--secondary) 0%, rgba(34, 197, 94, 0.35) 100%);
+    }
+
+    .chart-bar:hover {
+      filter: brightness(1.18);
+    }
+
+    .chart-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      padding-bottom: 10px;
+    }
+
+    .status-breakdown {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .status-row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .status-row-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .activity-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+    }
+
+    .activity-info strong {
+      display: block;
+      font-size: 0.88rem;
+      color: var(--text-main);
+    }
+
+    .activity-info span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .activity-liters {
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--secondary);
+      background-color: var(--secondary-muted);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    /* TABLE SECTION & CONTROLS */
+    .table-card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .table-header-info h2 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .table-header-info p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .table-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .input-search, .select-filter {
+      background-color: var(--bg-main);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 9px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .input-search:focus, .select-filter:focus {
+      border-color: var(--primary);
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    thead th {
+      background-color: #181818;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 14px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+
+    tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background-color: var(--bg-hover);
+    }
+
+    tbody td {
+      padding: 18px 24px;
+      vertical-align: middle;
+      font-size: 0.9rem;
+    }
+
+    .point-name {
+      font-weight: 600;
+      color: var(--text-main);
+      display: block;
+    }
+
+    .point-region {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      display: block;
+    }
+
+    /* STATUS BADGES & INTERACTIVE STATUS SELECT */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.01em;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .status-select-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .status-select-dot {
+      position: absolute;
+      left: 12px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .status-select {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 1px solid transparent;
+      padding: 6px 28px 6px 25px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: var(--transition);
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 12px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    }
+
+    .status-select option {
+      background-color: var(--bg-card);
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .status-select:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .status-select:focus {
+      box-shadow: 0 0 0 2px var(--primary-muted);
+    }
+
+    .badge-ativo { background-color: var(--secondary-muted); color: var(--secondary); }
+    .badge-ativo .badge-dot, .status-select-wrapper.badge-ativo .status-select-dot { background-color: var(--secondary); }
+
+    .badge-inativo { background-color: var(--status-inactive-muted); color: var(--status-inactive); }
+    .badge-inativo .badge-dot, .status-select-wrapper.badge-inativo .status-select-dot { background-color: var(--status-inactive); }
+
+    .badge-negociacao { background-color: var(--status-negotiation-muted); color: var(--status-negotiation); }
+    .badge-negociacao .badge-dot, .status-select-wrapper.badge-negociacao .status-select-dot { background-color: var(--status-negotiation); }
+
+    .badge-teste { background-color: var(--status-testing-muted); color: var(--status-testing); }
+    .badge-teste .badge-dot, .status-select-wrapper.badge-teste .status-select-dot { background-color: var(--status-testing); }
+
+    /* VOLUME COLUMN */
+    .volume-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-width: 180px;
+    }
+
+    .volume-text {
+      font-weight: 600;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .volume-bar-bg {
+      width: 100%;
+      height: 6px;
+      background-color: #2E2E2E;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .volume-bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+      transition: width 0.4s ease;
+    }
+
+    /* ACTION BUTTONS */
+    .actions-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      background-color: var(--secondary-muted);
+      color: var(--secondary);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .btn-whatsapp:hover {
+      background-color: var(--secondary);
+      color: #0B1911;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+    }
+
+    .btn-edit {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-elevated);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-edit:hover {
+      background-color: var(--bg-hover);
+      color: var(--primary);
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .btn-collect, .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: var(--radius-md);
+      background-color: var(--primary);
+      color: #121212;
+      font-size: 0.84rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-collect:hover, .btn-primary:hover {
+      background-color: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(255, 215, 0, 0.25);
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-elevated);
+      color: var(--text-main);
+      font-size: 0.84rem;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--bg-hover);
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    /* SETTINGS VIEW */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .toggle-row:last-child {
+      border-bottom: none;
+    }
+
+    .toggle-info strong {
+      display: block;
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .toggle-info span {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #333;
+      transition: .25s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 3px;
+      bottom: 3px;
+      background-color: var(--text-main);
+      transition: .25s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--secondary);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(20px);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-box {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 440px;
+      box-shadow: var(--shadow-lg);
+      transform: translateY(12px) scale(0.98);
+      transition: var(--transition);
+      overflow: hidden;
+    }
+
+    .modal-overlay.active .modal-box {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .modal-close:hover {
+      background-color: var(--bg-hover);
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .selected-point-box {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+    }
+
+    .selected-point-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .selected-point-name {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-group label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 14px;
+      background-color: var(--bg-main);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: var(--text-main);
+      font-size: 0.92rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-muted);
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      background-color: #181818;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn-cancel {
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-cancel:hover {
+      background-color: var(--bg-hover);
+      color: var(--text-main);
+    }
+
+    .btn-save {
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      background-color: var(--primary);
+      border: none;
+      color: #121212;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-save:hover {
+      background-color: var(--primary-hover);
+    }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--primary);
+      color: var(--text-main);
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.86rem;
+      font-weight: 500;
+      z-index: 2000;
+      opacity: 0;
+      transform: translateY(16px);
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1100px) {
+      .kpi-grid, .kpi-grid-4, .dashboard-grid, .settings-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 72px;
+      }
+      .brand-text,
+      .nav-link span,
+      .sidebar-footer {
+        display: none;
+      }
+      .sidebar-brand {
+        justify-content: center;
+        padding: 0;
+      }
+      .nav-link {
+        justify-content: center;
+      }
+      .main-wrapper {
+        margin-left: 72px;
+      }
+      .header, .content {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <span class="brand-title">Bio Óleo Admin</span>
+        <span class="brand-subtitle">Backoffice Corporativo</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button type="button" class="nav-link" data-target="view-dashboard" data-title="Dashboard Executivo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="7" height="7"></rect>
+          <rect x="14" y="3" width="7" height="7"></rect>
+          <rect x="14" y="14" width="7" height="7"></rect>
+          <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+        <span>Dashboard</span>
+      </button>
+
+      <button type="button" class="nav-link active" data-target="view-ecopontos" data-title="Gestão de Ecopontos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <span>Gestão de Ecopontos</span>
+      </button>
+
+      <button type="button" class="nav-link" data-target="view-relatorios" data-title="Relatórios e Viabilidade">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"></line>
+          <line x1="12" y1="20" x2="12" y2="4"></line>
+          <line x1="6" y1="20" x2="6" y2="14"></line>
+        </svg>
+        <span>Relatórios</span>
+      </button>
+
+      <button type="button" class="nav-link" data-target="view-configuracoes" data-title="Configurações do Sistema">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+        <span>Configurações</span>
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="system-status">
+        <span class="status-dot"></span>
+        <span>Operação Online</span>
+      </div>
+      <span>v2.6.0</span>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT WRAPPER -->
+  <div class="main-wrapper">
+    <header class="header">
+      <div class="header-title">
+        <h1 id="page-header-title">Gestão de Ecopontos</h1>
+      </div>
+      <div class="header-profile">
+        <div class="profile-avatar" id="header-avatar">BO</div>
+        <div class="profile-info">
+          <span class="profile-name" id="header-admin-name">Admin - Bio Óleo</span>
+          <span class="profile-role" id="header-admin-role">Gestor Operacional</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- ==========================================
+           VIEW 1: DASHBOARD EXECUTIVO
+           ========================================== -->
+      <section id="view-dashboard" class="view-section">
+        <div class="kpi-grid-4">
+          <div class="kpi-card">
+            <div class="kpi-data">
+              <span class="kpi-label">Volume Coletado (Mês)</span>
+              <span class="kpi-value" id="dash-volume-total">0 L</span>
+              <span class="kpi-meta positive">+14,2% vs. mês anterior</span>
+            </div>
+            <div class="kpi-icon total">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-data">
+              <span class="kpi-label">Água Preservada</span>
+              <span class="kpi-value" id="dash-agua-preservada">0 M</span>
+              <span class="kpi-meta">25 mil L preservados por litro</span>
+            </div>
+            <div class="kpi-icon active">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-data">
+              <span class="kpi-label">Média por Ponto Ativo</span>
+              <span class="kpi-value" id="dash-media-ponto">0 L</span>
+              <span class="kpi-meta" id="dash-meta-label">Meta mínima: 150 L/mês</span>
+            </div>
+            <div class="kpi-icon testing">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-data">
+              <span class="kpi-label">Receita Bruta Estimada</span>
+              <span class="kpi-value" id="dash-receita">R$ 0</span>
+              <span class="kpi-meta">Conversão em biodiesel</span>
+            </div>
+            <div class="kpi-icon negotiation">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="1" x2="12" y2="23"></line>
+                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h2>Evolução Volumétrica Semestral (Litros)</h2>
+                <p>Desempenho consolidado da malha logística nos últimos 6 meses</p>
+              </div>
+              <button type="button" class="btn-outline" onclick="navegarPara('view-ecopontos')">
+                Ir para Coletas
+              </button>
+            </div>
+            <div class="chart-bars" id="dashboard-chart"></div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h2>Distribuição da Rede por Status</h2>
+                <p>Proporção operacional dos estabelecimentos</p>
+              </div>
+            </div>
+            <div class="status-breakdown" id="dashboard-status-breakdown"></div>
+          </div>
+        </div>
+
+        <div class="panel-card">
+          <div class="panel-header">
+            <div>
+              <h2>Últimas Coletas Registradas</h2>
+              <p>Histórico em tempo real das entradas de óleo residual</p>
+            </div>
+          </div>
+          <div class="activity-list" id="dashboard-recent-list"></div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           VIEW 2: GESTÃO DE ECOPONTOS
+           ========================================== -->
+      <section id="view-ecopontos" class="view-section active">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-data">
+              <span class="kpi-label">Total de Pontos de Coleta</span>
+              <span class="kpi-value" id="kpi-total">0</span>
+              <span class="kpi-meta">Base cadastrada na rede</span>
+            </div>
+            <div class="kpi-icon total">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-data">
+              <span class="kpi-label">Pontos Ativos</span>
+              <span class="kpi-value" id="kpi-active">0</span>
+              <span class="kpi-meta">Coleta regular em operação</span>
+            </div>
+            <div class="kpi-icon active">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-data">
+              <span class="kpi-label">Pontos em Negociação</span>
+              <span class="kpi-value" id="kpi-negotiation">0</span>
+              <span class="kpi-meta">Em fase de homologação comercial</span>
+            </div>
+            <div class="kpi-icon negotiation">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <div class="table-header-info">
+              <h2>Monitoramento de Unidades Parceiras</h2>
+              <p>Clique diretamente na etiqueta de Status para alterar a situação do ponto ou use o botão de edição</p>
+            </div>
+
+            <div class="table-controls">
+              <input
+                type="text"
+                id="search-ecoponto"
+                class="input-search"
+                placeholder="Buscar estabelecimento..."
+              />
+              <select id="filter-status" class="select-filter">
+                <option value="Todos">Todos os Status</option>
+                <option value="Ativo">Ativo</option>
+                <option value="Em Teste">Em Teste</option>
+                <option value="Em Negociação">Em Negociação</option>
+                <option value="Inativo">Inativo</option>
+              </select>
+              <button type="button" class="btn-primary" id="btn-open-new-point">
+                + Novo Ecoponto
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nome do Estabelecimento</th>
+                  <th>Status (Clique para alterar)</th>
+                  <th>Volume Mensal (L)</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="ecopontos-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           VIEW 3: RELATÓRIOS
+           ========================================== -->
+      <section id="view-relatorios" class="view-section">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-data">
+              <span class="kpi-label">Pontos Acima da Meta</span>
+              <span class="kpi-value" id="rel-acima-meta">0</span>
+              <span class="kpi-meta">Unidades de alta rentabilidade</span>
+            </div>
+            <div class="kpi-icon active">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+              </svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-data">
+              <span class="kpi-label">Custo Logístico / Litro</span>
+              <span class="kpi-value" id="rel-custo-litro">R$ 1,18</span>
+              <span class="kpi-meta">Frota própria e rotas otimizadas</span>
+            </div>
+            <div class="kpi-icon testing">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="1" y="3" width="15" height="13"></rect>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+                <circle cx="5.5" cy="18.5" r="2.5"></circle>
+                <circle cx="18.5" cy="18.5" r="2.5"></circle>
+              </svg>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-data">
+              <span class="kpi-label">Emissões de CO₂ Evitadas</span>
+              <span class="kpi-value" id="rel-co2">0 t</span>
+              <span class="kpi-meta">Certificação ambiental mensal</span>
+            </div>
+            <div class="kpi-icon total">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-header">
+            <div class="table-header-info">
+              <h2>Relatório Analítico de Viabilidade por Ecoponto</h2>
+              <p>Comparativo entre volume coletado, meta operacional e índice de eficiência</p>
+            </div>
+            <div class="table-controls">
+              <button type="button" class="btn-primary" id="btn-export-csv">
+                Exportar Planilha (CSV)
+              </button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table>
+              <thead>
+                <tr>
+                  <th>Estabelecimento</th>
+                  <th>Status Operacional</th>
+                  <th>Volume Realizado</th>
+                  <th>Atingimento da Meta</th>
+                  <th>Parecer de Viabilidade</th>
+                </tr>
+              </thead>
+              <tbody id="relatorios-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           VIEW 4: CONFIGURAÇÕES
+           ========================================== -->
+      <section id="view-configuracoes" class="view-section">
+        <form id="settings-form" class="settings-grid">
+          <div class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h2>Parâmetros Operacionais e Financeiros</h2>
+                <p>Regras de cálculo aplicadas ao Dashboard e aos Relatórios</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="cfg-admin-name">Nome de Exibição do Administrador</label>
+              <input type="text" id="cfg-admin-name" class="input-field" value="Admin - Bio Óleo" required />
+            </div>
+
+            <div class="form-group">
+              <label for="cfg-admin-role">Cargo / Departamento</label>
+              <input type="text" id="cfg-admin-role" class="input-field" value="Gestor Operacional" required />
+            </div>
+
+            <div class="form-group">
+              <label for="cfg-meta-minima">Meta Mínima de Viabilidade por Ecoponto (Litros/Mês)</label>
+              <input type="number" id="cfg-meta-minima" class="input-field" value="150" min="10" step="10" required />
+            </div>
+
+            <div class="form-group">
+              <label for="cfg-valor-litro">Receita Estimada de Beneficiamento por Litro (R$)</label>
+              <input type="number" id="cfg-valor-litro" class="input-field" value="4.50" min="0.5" step="0.10" required />
+            </div>
+          </div>
+
+          <div class="panel-card">
+            <div class="panel-header">
+              <div>
+                <h2>Automação e Alertas de Logística</h2>
+                <p>Preferências de notificação da central de coleta</p>
+              </div>
+            </div>
+
+            <div>
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <strong>Auto-Ativar Ponto ao Registrar Coleta</strong>
+                  <span>Mudar automaticamente para "Ativo" caso esteja "Inativo" ou "Em Negociação"</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="cfg-auto-activate" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <strong>Alerta de Bombona Cheia (Acima de 200 L)</strong>
+                  <span>Destacar pontos prioritários para roteirização imediata</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <strong>Mensagem Automática no WhatsApp</strong>
+                  <span>Preencher saudação corporativa ao acionar responsável</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <div class="toggle-row">
+                <div class="toggle-info">
+                  <strong>Fechamento Mensal Automático</strong>
+                  <span>Enviar relatório consolidado para diretoria todo dia 1º</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" checked />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+
+            <div style="margin-top: auto; display: flex; justify-content: flex-end; padding-top: 16px;">
+              <button type="submit" class="btn-primary">Salvar Configurações</button>
+            </div>
+          </div>
+        </form>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL 1: REGISTRAR COLETA -->
+  <div class="modal-overlay" id="collect-modal">
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h3 id="modal-title">Registrar Coleta</h3>
+        <button type="button" class="modal-close" id="btn-close-modal" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form id="collect-form">
+        <div class="modal-body">
+          <div class="selected-point-box">
+            <span class="selected-point-label">Ecoponto Selecionado</span>
+            <span class="selected-point-name" id="modal-point-name">—</span>
+          </div>
+
+          <div class="form-group">
+            <label for="input-liters">Litros coletados hoje</label>
+            <input
+              type="number"
+              id="input-liters"
+              class="input-field"
+              placeholder="Informe a litragem (ex: 85)"
+              min="1"
+              step="0.5"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" id="btn-cancel-modal">Cancelar</button>
+          <button type="submit" class="btn-save">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: NOVO ECOPONTO -->
+  <div class="modal-overlay" id="new-point-modal">
+    <div class="modal-box" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h3>Cadastrar Novo Ecoponto</h3>
+        <button type="button" class="modal-close" id="btn-close-new-modal" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form id="new-point-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="np-nome">Nome do Estabelecimento</label>
+            <input type="text" id="np-nome" class="input-field" placeholder="Ex: Condomínio Jardim Imperial" required />
+          </div>
+          <div class="form-group">
+            <label for="np-regiao">Região / Detalhes</label>
+            <input type="text" id="np-regiao" class="input-field" placeholder="Ex: Zona Sul • 240 unidades" required />
+          </div>
+          <div class="form-group">
+            <label for="np-status">Status Inicial</label>
+            <select id="np-status" class="input-field">
+              <option value="Ativo">Ativo</option>
+              <option value="Em Teste">Em Teste</option>
+              <option value="Em Negociação">Em Negociação</option>
+              <option value="Inativo">Inativo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="np-telefone">WhatsApp do Responsável (com DDD)</label>
+            <input type="text" id="np-telefone" class="input-field" placeholder="5511999999999" value="5511999999999" required />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" id="btn-cancel-new-modal">Cancelar</button>
+          <button type="submit" class="btn-save">Cadastrar Ponto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 3: EDITAR ECOPONTO / STATUS -->
+  <div class="modal-overlay" id="edit-point-modal">
+    <div class="modal-box" role="dialog" aria-modal="true">
+      <div class="modal-header">
+        <h3>Editar Ecoponto & Status</h3>
+        <button type="button" class="modal-close" id="btn-close-edit-modal" aria-label="Fechar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <form id="edit-point-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="ep-nome">Nome do Estabelecimento</label>
+            <input type="text" id="ep-nome" class="input-field" required />
+          </div>
+          <div class="form-group">
+            <label for="ep-regiao">Região / Detalhes</label>
+            <input type="text" id="ep-regiao" class="input-field" required />
+          </div>
+          <div class="form-group">
+            <label for="ep-status">Status Operacional</label>
+            <select id="ep-status" class="input-field">
+              <option value="Ativo">Ativo</option>
+              <option value="Em Teste">Em Teste</option>
+              <option value="Em Negociação">Em Negociação</option>
+              <option value="Inativo">Inativo</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="ep-volume">Volume Mensal Acumulado (L)</label>
+            <input type="number" id="ep-volume" class="input-field" min="0" step="0.5" required />
+          </div>
+          <div class="form-group">
+            <label for="ep-telefone">WhatsApp do Responsável</label>
+            <input type="text" id="ep-telefone" class="input-field" required />
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" id="btn-cancel-edit-modal">Cancelar</button>
+          <button type="submit" class="btn-save">Salvar Alterações</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast-notification" class="toast">
+    <span class="toast-dot"></span>
+    <span id="toast-message">Status atualizado com sucesso!</span>
+  </div>
+
+  <script>
+    // ESTADO GLOBAL DA APLICAÇÃO
+    const configSistema = {
+      adminName: "Admin - Bio Óleo",
+      adminRole: "Gestor Operacional",
+      metaMinimaLitros: 150,
+      receitaPorLitro: 4.50,
+      autoAtivarNaColeta: true
+    };
+
+    const ecopontos = [
+      {
+        id: 1,
+        nome: "Condomínio Residencial Solar das Palmeiras",
+        regiao: "Zona Sul • 320 unidades",
+        status: "Ativo",
+        volumeMensal: 480,
+        telefone: "5511987654321"
+      },
+      {
+        id: 2,
+        nome: "Supermercado Bom Preço Matriz",
+        regiao: "Centro Comercial • Grande Porte",
+        status: "Ativo",
+        volumeMensal: 620,
+        telefone: "5511976543210"
+      },
+      {
+        id: 3,
+        nome: "Centro Gastronômico Vila Gourmet",
+        regiao: "Distrito Industrial • Polo Alimentício",
+        status: "Em Teste",
+        volumeMensal: 215,
+        telefone: "5511965432109"
+      },
+      {
+        id: 4,
+        nome: "Rede Atacadista Vale Verde",
+        regiao: "Rodovia BR-101 • Km 42",
+        status: "Em Negociação",
+        volumeMensal: 0,
+        telefone: "5511954321098"
+      },
+      {
+        id: 5,
+        nome: "Condomínio Parque das Águas",
+        regiao: "Zona Oeste • 180 unidades",
+        status: "Ativo",
+        volumeMensal: 340,
+        telefone: "5511943210987"
+      },
+      {
+        id: 6,
+        nome: "Restaurante & Churrascaria Pampa Nobre",
+        regiao: "Avenida Brasil • Setor Hoteleiro",
+        status: "Inativo",
+        volumeMensal: 45,
+        telefone: "5511932109876"
+      },
+      {
+        id: 7,
+        nome: "Cooperativa Habitacional Horizonte Azul",
+        regiao: "Zona Norte • 450 unidades",
+        status: "Em Negociação",
+        volumeMensal: 0,
+        telefone: "5511921098765"
+      }
+    ];
+
+    const historicoSemestral = [
+      { mes: "Jun", litros: 1180 },
+      { mes: "Jul", litros: 1340 },
+      { mes: "Ago", litros: 1290 },
+      { mes: "Set", litros: 1510 },
+      { mes: "Out", litros: 1620 }
+    ];
+
+    const coletasRecentes = [
+      { estabelecimento: "Supermercado Bom Preço Matriz", data: "Hoje, 10:40", litros: 120 },
+      { estabelecimento: "Condomínio Residencial Solar das Palmeiras", data: "Ontem, 16:15", litros: 95 },
+      { estabelecimento: "Centro Gastronômico Vila Gourmet", data: "Há 2 dias", litros: 65 },
+      { estabelecimento: "Condomínio Parque das Águas", data: "Há 3 dias", litros: 80 }
+    ];
+
+    let pontoSelecionadoId = null;
+    let pontoEditandoId = null;
+    let toastTimeout = null;
+
+    function exibirToast(mensagem) {
+      const toast = document.getElementById("toast-notification");
+      const toastMsg = document.getElementById("toast-message");
+      toastMsg.textContent = mensagem;
+      toast.classList.add("show");
+      clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3200);
+    }
+
+    // NAVEGAÇÃO SPA (SIDEBAR)
+    const navLinks = document.querySelectorAll(".nav-link");
+    const viewSections = document.querySelectorAll(".view-section");
+    const pageHeaderTitle = document.getElementById("page-header-title");
+
+    function navegarPara(targetId) {
+      navLinks.forEach(btn => {
+        const isMatch = btn.getAttribute("data-target") === targetId;
+        btn.classList.toggle("active", isMatch);
+        if (isMatch) {
+          pageHeaderTitle.textContent = btn.getAttribute("data-title");
+        }
+      });
+
+      viewSections.forEach(sec => {
+        sec.classList.toggle("active", sec.id === targetId);
+      });
+
+      sincronizarSistema();
+    }
+
+    navLinks.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const targetId = btn.getAttribute("data-target");
+        navegarPara(targetId);
+      });
+    });
+
+    function obterClasseBadge(status) {
+      switch (status) {
+        case "Ativo": return "badge-ativo";
+        case "Inativo": return "badge-inativo";
+        case "Em Negociação": return "badge-negociacao";
+        case "Em Teste": return "badge-teste";
+        default: return "badge-teste";
+      }
+    }
+
+    // ALTERAÇÃO DIRETA DE STATUS NA TABELA
+    function alterarStatusRapido(id, novoStatus) {
+      const ponto = ecopontos.find(p => p.id === id);
+      if (!ponto) return;
+
+      ponto.status = novoStatus;
+      sincronizarSistema();
+      exibirToast(`Status de "${ponto.nome}" alterado para ${novoStatus}.`);
+    }
+
+    // RENDERIZAÇÃO: GESTÃO DE ECOPONTOS
+    const tbodyEcopontos = document.getElementById("ecopontos-tbody");
+    const searchInput = document.getElementById("search-ecoponto");
+    const filterStatus = document.getElementById("filter-status");
+
+    function renderizarEcopontos() {
+      document.getElementById("kpi-total").textContent = ecopontos.length;
+      document.getElementById("kpi-active").textContent = ecopontos.filter(p => p.status === "Ativo").length;
+      document.getElementById("kpi-negotiation").textContent = ecopontos.filter(p => p.status === "Em Negociação").length;
+
+      const termo = searchInput.value.toLowerCase().trim();
+      const statusFiltro = filterStatus.value;
+
+      const filtrados = ecopontos.filter(ponto => {
+        const matchTexto = ponto.nome.toLowerCase().includes(termo) || ponto.regiao.toLowerCase().includes(termo);
+        const matchStatus = statusFiltro === "Todos" || ponto.status === statusFiltro;
+        return matchTexto && matchStatus;
+      });
+
+      tbodyEcopontos.innerHTML = "";
+      const volumeMaximoReferencia = 700;
+      const listaStatus = ["Ativo", "Em Teste", "Em Negociação", "Inativo"];
+
+      filtrados.forEach(ponto => {
+        const tr = document.createElement("tr");
+        const badgeClass = obterClasseBadge(ponto.status);
+        const percentualBarra = Math.min(100, Math.round((ponto.volumeMensal / volumeMaximoReferencia) * 100));
+        const mensagemWhatsApp = encodeURIComponent(
+          `Olá! Contato da equipe logística da Bio Óleo Brasil referente ao ponto de coleta: ${ponto.nome}.`
+        );
+
+        const opcoesSelect = listaStatus.map(st =>
+          `<option value="${st}" ${ponto.status === st ? 'selected' : ''}>${st}</option>`
+        ).join("");
+
+        tr.innerHTML = `
+          <td>
+            <span class="point-name">${ponto.nome}</span>
+            <span class="point-region">${ponto.regiao}</span>
+          </td>
+          <td>
+            <div class="status-select-wrapper ${badgeClass}">
+              <span class="status-select-dot"></span>
+              <select
+                class="status-select ${badgeClass}"
+                onchange="alterarStatusRapido(${ponto.id}, this.value)"
+                title="Clique para alterar o status do Ecoponto"
+              >
+                ${opcoesSelect}
+              </select>
+            </div>
+          </td>
+          <td>
+            <div class="volume-wrapper">
+              <span class="volume-text">${ponto.volumeMensal.toLocaleString('pt-BR')} L</span>
+              <div class="volume-bar-bg">
+                <div class="volume-bar-fill" style="width: ${percentualBarra}%"></div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div class="actions-cell">
+              <a
+                href="https://wa.me/${ponto.telefone}?text=${mensagemWhatsApp}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-whatsapp"
+                title="Contatar responsável via WhatsApp"
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.582 2.128 2.182-.573c.978.58 1.911.928 3.145.929 3.178 0 5.767-2.587 5.768-5.766.001-3.187-2.575-5.77-5.764-5.771zm3.392 8.244c-.144.405-.837.774-1.17.824-.299.045-.677.063-1.092-.069-.252-.08-.575-.187-.988-.365-1.739-.751-2.874-2.502-2.961-2.617-.087-.116-.708-.94-.708-1.793s.448-1.273.607-1.446c.159-.173.346-.217.462-.217l.332.006c.106.005.249-.04.39.298.144.347.491 1.2.534 1.287.043.087.072.188.014.304-.058.116-.087.188-.173.289l-.26.304c-.087.086-.177.18-.076.354.101.174.449.741.964 1.201.662.591 1.221.774 1.394.86s.274.072.376-.043c.101-.116.433-.506.549-.68.116-.173.231-.145.39-.087s1.011.477 1.184.564.289.13.332.202c.045.072.045.419-.1.824zm-3.423-14.416c-6.627 0-12 5.373-12 12 0 2.126.556 4.124 1.529 5.855l-1.529 5.582 5.716-1.499c1.682.912 3.609 1.434 5.66 1.434 6.627 0 12-5.373 12-12 0-6.627-5.373-12-11.376-11.372z"/>
+                </svg>
+              </a>
+              <button
+                type="button"
+                class="btn-edit"
+                onclick="abrirModalEditar(${ponto.id})"
+                title="Editar cadastro e status do Ecoponto"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button
+                type="button"
+                class="btn-collect"
+                onclick="abrirModalColeta(${ponto.id})"
+              >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Registrar Coleta
+              </button>
+            </div>
+          </td>
+        `;
+        tbodyEcopontos.appendChild(tr);
+      });
+    }
+
+    searchInput.addEventListener("input", renderizarEcopontos);
+    filterStatus.addEventListener("change", renderizarEcopontos);
+
+    // RENDERIZAÇÃO: DASHBOARD EXECUTIVO
+    function renderizarDashboard() {
+      const volumeTotal = ecopontos.reduce((acc, p) => acc + p.volumeMensal, 0);
+      const ativos = ecopontos.filter(p => p.status === "Ativo").length || 1;
+      const mediaPorAtivo = Math.round(volumeTotal / ativos);
+      const aguaPreservadaMilhoes = ((volumeTotal * 25000) / 1000000).toFixed(1);
+      const receitaEstimada = volumeTotal * configSistema.receitaPorLitro;
+
+      document.getElementById("dash-volume-total").textContent = `${volumeTotal.toLocaleString('pt-BR')} L`;
+      document.getElementById("dash-agua-preservada").textContent = `${aguaPreservadaMilhoes.replace('.', ',')} M L`;
+      document.getElementById("dash-media-ponto").textContent = `${mediaPorAtivo.toLocaleString('pt-BR')} L`;
+      document.getElementById("dash-meta-label").textContent = `Meta mínima: ${configSistema.metaMinimaLitros} L/mês`;
+      document.getElementById("dash-receita").textContent = receitaEstimada.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+      // Gráfico de Barras
+      const chartContainer = document.getElementById("dashboard-chart");
+      const dadosGrafico = [...historicoSemestral, { mes: "Atual", litros: volumeTotal, atual: true }];
+      const maxLitros = Math.max(...dadosGrafico.map(d => d.litros), 2000);
+
+      chartContainer.innerHTML = dadosGrafico.map(item => {
+        const altura = Math.max(12, Math.round((item.litros / maxLitros) * 150));
+        return `
+          <div class="chart-col">
+            <span class="chart-bar-value">${item.litros}L</span>
+            <div class="chart-bar ${item.atual ? 'current' : ''}" style="height: ${altura}px"></div>
+            <span class="chart-label">${item.mes}</span>
+          </div>
+        `;
+      }).join("");
+
+      // Distribuição por Status
+      const grupos = [
+        { nome: "Ativo", cor: "var(--secondary)" },
+        { nome: "Em Teste", cor: "var(--status-testing)" },
+        { nome: "Em Negociação", cor: "var(--status-negotiation)" },
+        { nome: "Inativo", cor: "var(--status-inactive)" }
+      ];
+
+      const statusContainer = document.getElementById("dashboard-status-breakdown");
+      statusContainer.innerHTML = grupos.map(g => {
+        const qtd = ecopontos.filter(p => p.status === g.nome).length;
+        const perc = Math.round((qtd / ecopontos.length) * 100);
+        return `
+          <div class="status-row">
+            <div class="status-row-header">
+              <span>${g.nome}</span>
+              <span>${qtd} un. (${perc}%)</span>
+            </div>
+            <div class="volume-bar-bg">
+              <div class="volume-bar-fill" style="width: ${perc}%; background: ${g.cor}"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      // Atividades Recentes
+      const recentContainer = document.getElementById("dashboard-recent-list");
+      recentContainer.innerHTML = coletasRecentes.slice(0, 5).map(c => `
+        <div class="activity-item">
+          <div class="activity-info">
+            <strong>${c.estabelecimento}</strong>
+            <span>Coleta confirmada • ${c.data}</span>
+          </div>
+          <span class="activity-liters">+${c.litros} L</span>
+        </div>
+      `).join("");
+    }
+
+    // RENDERIZAÇÃO: RELATÓRIOS
+    function renderizarRelatorios() {
+      const meta = configSistema.metaMinimaLitros;
+      const acimaDaMeta = ecopontos.filter(p => p.volumeMensal >= meta).length;
+      const volumeTotal = ecopontos.reduce((acc, p) => acc + p.volumeMensal, 0);
+      const co2Evitado = ((volumeTotal * 2.5) / 1000).toFixed(2);
+
+      document.getElementById("rel-acima-meta").textContent = `${acimaDaMeta} de ${ecopontos.length}`;
+      document.getElementById("rel-co2").textContent = `${co2Evitado.replace('.', ',')} t`;
+
+      const tbodyRel = document.getElementById("relatorios-tbody");
+      tbodyRel.innerHTML = ecopontos.map(p => {
+        const percMeta = Math.round((p.volumeMensal / meta) * 100);
+        let parecer = "Alta Viabilidade";
+        let classeParecer = "badge-ativo";
+
+        if (p.volumeMensal === 0) {
+          parecer = "Sem Movimentação";
+          classeParecer = "badge-negociacao";
+        } else if (p.volumeMensal < meta) {
+          parecer = "Abaixo da Meta";
+          classeParecer = "badge-inativo";
+        }
+
+        return `
+          <tr>
+            <td>
+              <span class="point-name">${p.nome}</span>
+              <span class="point-region">${p.regiao}</span>
+            </td>
+            <td>
+              <span class="badge ${obterClasseBadge(p.status)}">
+                <span class="badge-dot"></span>
+                ${p.status}
+              </span>
+            </td>
+            <td><strong>${p.volumeMensal.toLocaleString('pt-BR')} L</strong> / ${meta} L</td>
+            <td>${percMeta}% da meta</td>
+            <td>
+              <span class="badge ${classeParecer}">
+                <span class="badge-dot"></span>
+                ${parecer}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // EXPORTAR CSV
+    document.getElementById("btn-export-csv").addEventListener("click", () => {
+      const linhas = [
+        ["ID", "Estabelecimento", "Regiao", "Status", "Volume Mensal (L)", "Meta Mensal (L)"],
+        ...ecopontos.map(p => [
+          p.id,
+          `"${p.nome}"`,
+          `"${p.regiao}"`,
+          p.status,
+          p.volumeMensal,
+          configSistema.metaMinimaLitros
+        ])
+      ];
+      const csvContent = "data:text/csv;charset=utf-8,\uFEFF" + linhas.map(e => e.join(";")).join("\n");
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement("a");
+      link.setAttribute("href", encodedUri);
+      link.setAttribute("download", "relatorio_ecopontos_bio_oleo.csv");
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    });
+
+    // CONFIGURAÇÕES DO SISTEMA
+    document.getElementById("settings-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      configSistema.adminName = document.getElementById("cfg-admin-name").value;
+      configSistema.adminRole = document.getElementById("cfg-admin-role").value;
+      configSistema.metaMinimaLitros = parseFloat(document.getElementById("cfg-meta-minima").value) || 150;
+      configSistema.receitaPorLitro = parseFloat(document.getElementById("cfg-valor-litro").value) || 4.5;
+      configSistema.autoAtivarNaColeta = document.getElementById("cfg-auto-activate").checked;
+
+      document.getElementById("header-admin-name").textContent = configSistema.adminName;
+      document.getElementById("header-admin-role").textContent = configSistema.adminRole;
+
+      sincronizarSistema();
+      exibirToast("Configurações operacionais salvas com sucesso!");
+    });
+
+    // MODAL 1: REGISTRAR COLETA
+    const modalOverlay = document.getElementById("collect-modal");
+    const modalPointName = document.getElementById("modal-point-name");
+    const inputLiters = document.getElementById("input-liters");
+    const collectForm = document.getElementById("collect-form");
+
+    function abrirModalColeta(id) {
+      const ponto = ecopontos.find(p => p.id === id);
+      if (!ponto) return;
+
+      pontoSelecionadoId = ponto.id;
+      modalPointName.textContent = ponto.nome;
+      inputLiters.value = "";
+      modalOverlay.classList.add("active");
+      setTimeout(() => inputLiters.focus(), 100);
+    }
+
+    function fecharModalColeta() {
+      modalOverlay.classList.remove("active");
+      pontoSelecionadoId = null;
+      collectForm.reset();
+    }
+
+    collectForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const litrosColetados = parseFloat(inputLiters.value);
+
+      if (isNaN(litrosColetados) || litrosColetados <= 0) {
+        alert("Por favor, insira um volume válido em litros.");
+        return;
+      }
+
+      const ponto = ecopontos.find(p => p.id === pontoSelecionadoId);
+      if (ponto) {
+        ponto.volumeMensal += litrosColetados;
+        if (configSistema.autoAtivarNaColeta && (ponto.status === "Em Negociação" || ponto.status === "Inativo")) {
+          ponto.status = "Ativo";
+        }
+        coletasRecentes.unshift({
+          estabelecimento: ponto.nome,
+          data: "Agora mesmo",
+          litros: litrosColetados
+        });
+
+        sincronizarSistema();
+        alert(`Coleta registrada com sucesso!\n\nEstabelecimento: ${ponto.nome}\nVolume adicionado: ${litrosColetados} L\nVolume mensal atualizado: ${ponto.volumeMensal} L`);
+      }
+
+      fecharModalColeta();
+    });
+
+    document.getElementById("btn-close-modal").addEventListener("click", fecharModalColeta);
+    document.getElementById("btn-cancel-modal").addEventListener("click", fecharModalColeta);
+
+    // MODAL 2: NOVO ECOPONTO
+    const newPointModal = document.getElementById("new-point-modal");
+    const newPointForm = document.getElementById("new-point-form");
+
+    document.getElementById("btn-open-new-point").addEventListener("click", () => {
+      newPointModal.classList.add("active");
+    });
+
+    function fecharNovoPontoModal() {
+      newPointModal.classList.remove("active");
+      newPointForm.reset();
+    }
+
+    document.getElementById("btn-close-new-modal").addEventListener("click", fecharNovoPontoModal);
+    document.getElementById("btn-cancel-new-modal").addEventListener("click", fecharNovoPontoModal);
+
+    newPointForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const novoPonto = {
+        id: Date.now(),
+        nome: document.getElementById("np-nome").value,
+        regiao: document.getElementById("np-regiao").value,
+        status: document.getElementById("np-status").value,
+        volumeMensal: 0,
+        telefone: document.getElementById("np-telefone").value.replace(/\D/g, "")
+      };
+      ecopontos.unshift(novoPonto);
+      sincronizarSistema();
+      fecharNovoPontoModal();
+      exibirToast(`Ecoponto "${novoPonto.nome}" cadastrado com sucesso!`);
+    });
+
+    // MODAL 3: EDITAR ECOPONTO COMPLETO
+    const editPointModal = document.getElementById("edit-point-modal");
+    const editPointForm = document.getElementById("edit-point-form");
+
+    function abrirModalEditar(id) {
+      const ponto = ecopontos.find(p => p.id === id);
+      if (!ponto) return;
+
+      pontoEditandoId = ponto.id;
+      document.getElementById("ep-nome").value = ponto.nome;
+      document.getElementById("ep-regiao").value = ponto.regiao;
+      document.getElementById("ep-status").value = ponto.status;
+      document.getElementById("ep-volume").value = ponto.volumeMensal;
+      document.getElementById("ep-telefone").value = ponto.telefone;
+
+      editPointModal.classList.add("active");
+    }
+
+    function fecharEditarPontoModal() {
+      editPointModal.classList.remove("active");
+      pontoEditandoId = null;
+      editPointForm.reset();
+    }
+
+    document.getElementById("btn-close-edit-modal").addEventListener("click", fecharEditarPontoModal);
+    document.getElementById("btn-cancel-edit-modal").addEventListener("click", fecharEditarPontoModal);
+
+    editPointForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const ponto = ecopontos.find(p => p.id === pontoEditandoId);
+      if (!ponto) return;
+
+      ponto.nome = document.getElementById("ep-nome").value;
+      ponto.regiao = document.getElementById("ep-regiao").value;
+      ponto.status = document.getElementById("ep-status").value;
+      ponto.volumeMensal = parseFloat(document.getElementById("ep-volume").value) || 0;
+      ponto.telefone = document.getElementById("ep-telefone").value.replace(/\D/g, "");
+
+      sincronizarSistema();
+      fecharEditarPontoModal();
+      exibirToast(`Cadastro de "${ponto.nome}" atualizado!`);
+    });
+
+    function sincronizarSistema() {
+      renderizarEcopontos();
+      renderizarDashboard();
+      renderizarRelatorios();
+    }
+
+    sincronizarSistema();
+  </script>
+</body>
+</html>
